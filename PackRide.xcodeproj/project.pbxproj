@@ -6,13 +6,53 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		340C5AF630341C7B00C4D6CD /* FirebaseFunctions in Frameworks */ = {isa = PBXBuildFile; productRef = 340C5AF530341C7B00C4D6CD /* FirebaseFunctions */; };
+		348D7C5530339C4600E00FF6 /* FirebaseMessaging in Frameworks */ = {isa = PBXBuildFile; productRef = 348D7C5430339C4600E00FF6 /* FirebaseMessaging */; };
+		348D7C5B3033C3DD00E00FF6 /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = 348D7C5A3033C3DD00E00FF6 /* FirebaseStorage */; };
+		348D7C66303419A000E00FF6 /* RtcBasic in Frameworks */ = {isa = PBXBuildFile; productRef = 348D7C65303419A000E00FF6 /* RtcBasic */; };
+		3494E99C3037376F0098DD4C /* GoogleMobileAds in Frameworks */ = {isa = PBXBuildFile; productRef = 3494E99B3037376F0098DD4C /* GoogleMobileAds */; };
+		34ADACAF2FBEF00A00325064 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 34ADACAE2FBEF00A00325064 /* FirebaseAuth */; };
+		34ADACB12FBEF00A00325064 /* FirebaseDatabase in Frameworks */ = {isa = PBXBuildFile; productRef = 34ADACB02FBEF00A00325064 /* FirebaseDatabase */; };
+		350000000000000000000001 /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = 350000000000000000000002 /* GoogleSignIn */; };
+		350000000000000000000003 /* FacebookLogin in Frameworks */ = {isa = PBXBuildFile; productRef = 350000000000000000000004 /* FacebookLogin */; };
+		360000000000000000000001 /* FirebaseCrashlytics in Frameworks */ = {isa = PBXBuildFile; productRef = 360000000000000000000002 /* FirebaseCrashlytics */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		3499ED7F303E3866001B9323 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
 		344073FA2FBEB37A00BACC63 /* PackRide.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PackRide.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		34ADACC52FC0FF7500325064 /* Exceptions for "PackRide" folder in "PackRide" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+				"packride-functions/functions/package-lock.json",
+			);
+			target = 344073F92FBEB37A00BACC63 /* PackRide */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		344073FC2FBEB37A00BACC63 /* PackRide */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				34ADACC52FC0FF7500325064 /* Exceptions for "PackRide" folder in "PackRide" target */,
+			);
 			path = PackRide;
 			sourceTree = "<group>";
 		};
@@ -23,6 +63,16 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				348D7C5530339C4600E00FF6 /* FirebaseMessaging in Frameworks */,
+				348D7C5B3033C3DD00E00FF6 /* FirebaseStorage in Frameworks */,
+				34ADACB12FBEF00A00325064 /* FirebaseDatabase in Frameworks */,
+				340C5AF630341C7B00C4D6CD /* FirebaseFunctions in Frameworks */,
+				34ADACAF2FBEF00A00325064 /* FirebaseAuth in Frameworks */,
+				348D7C66303419A000E00FF6 /* RtcBasic in Frameworks */,
+				3494E99C3037376F0098DD4C /* GoogleMobileAds in Frameworks */,
+				350000000000000000000001 /* GoogleSignIn in Frameworks */,
+				350000000000000000000003 /* FacebookLogin in Frameworks */,
+				360000000000000000000001 /* FirebaseCrashlytics in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -33,6 +83,7 @@
 			isa = PBXGroup;
 			children = (
 				344073FC2FBEB37A00BACC63 /* PackRide */,
+				348D7C5330339C4600E00FF6 /* Frameworks */,
 				344073FB2FBEB37A00BACC63 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -45,6 +96,13 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		348D7C5330339C4600E00FF6 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -55,6 +113,7 @@
 				344073F62FBEB37A00BACC63 /* Sources */,
 				344073F72FBEB37A00BACC63 /* Frameworks */,
 				344073F82FBEB37A00BACC63 /* Resources */,
+				3499ED7F303E3866001B9323 /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
@@ -65,6 +124,16 @@
 			);
 			name = PackRide;
 			packageProductDependencies = (
+				34ADACAE2FBEF00A00325064 /* FirebaseAuth */,
+				34ADACB02FBEF00A00325064 /* FirebaseDatabase */,
+				348D7C5430339C4600E00FF6 /* FirebaseMessaging */,
+				348D7C5A3033C3DD00E00FF6 /* FirebaseStorage */,
+				348D7C65303419A000E00FF6 /* RtcBasic */,
+				340C5AF530341C7B00C4D6CD /* FirebaseFunctions */,
+				3494E99B3037376F0098DD4C /* GoogleMobileAds */,
+				350000000000000000000002 /* GoogleSignIn */,
+				350000000000000000000004 /* FacebookLogin */,
+				360000000000000000000002 /* FirebaseCrashlytics */,
 			);
 			productName = PackRide;
 			productReference = 344073FA2FBEB37A00BACC63 /* PackRide.app */;
@@ -77,8 +146,8 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
-				LastSwiftUpdateCheck = 2650;
-				LastUpgradeCheck = 2650;
+				LastSwiftUpdateCheck = 2660;
+				LastUpgradeCheck = 2660;
 				TargetAttributes = {
 					344073F92FBEB37A00BACC63 = {
 						CreatedOnToolsVersion = 26.5;
@@ -94,6 +163,13 @@
 			);
 			mainGroup = 344073F12FBEB37A00BACC63;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				34ADACAD2FBEF00A00325064 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+				348D7C64303419A000E00FF6 /* XCRemoteSwiftPackageReference "AgoraRtcEngine_iOS" */,
+				3494E99A3037376F0098DD4C /* XCRemoteSwiftPackageReference "swift-package-manager-google-mobile-ads" */,
+				350000000000000000000005 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */,
+				350000000000000000000006 /* XCRemoteSwiftPackageReference "facebook-ios-sdk" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 344073FB2FBEB37A00BACC63 /* Products */;
 			projectDirPath = "";
@@ -160,6 +236,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = S449ULH37K;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
@@ -179,10 +256,12 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 26.5;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				"MARKETING_VERSION[sdk=*]" = 1.7;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
@@ -223,6 +302,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = S449ULH37K;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
@@ -236,9 +316,11 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 26.5;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				"MARKETING_VERSION[sdk=*]" = 1.7;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				VALIDATE_PRODUCT = YES;
 			};
@@ -249,22 +331,32 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = PackRide/PackRide.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = S449ULH37K;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = PackRide/Info.plist;
+				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "PackRide needs your location to track your ride";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "PackRide needs your location to track your ride";
+				INFOPLIST_KEY_NSMotionUsageDescription = "PackRide uses motion sensors to detect crashes during your ride and alert your group.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.7;
+				"MARKETING_VERSION[sdk=*]" = 1.7;
 				PRODUCT_BUNDLE_IDENTIFIER = com.karthik.packride.PackRide;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
@@ -280,22 +372,32 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = PackRide/PackRide.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = S449ULH37K;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = PackRide/Info.plist;
+				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "PackRide needs your location to track your ride";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "PackRide needs your location to track your ride";
+				INFOPLIST_KEY_NSMotionUsageDescription = "PackRide uses motion sensors to detect crashes during your ride and alert your group.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.7;
+				"MARKETING_VERSION[sdk=*]" = 1.7;
 				PRODUCT_BUNDLE_IDENTIFIER = com.karthik.packride.PackRide;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
@@ -328,6 +430,102 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		348D7C64303419A000E00FF6 /* XCRemoteSwiftPackageReference "AgoraRtcEngine_iOS" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/AgoraIO/AgoraRtcEngine_iOS.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 4.6.2;
+			};
+		};
+		3494E99A3037376F0098DD4C /* XCRemoteSwiftPackageReference "swift-package-manager-google-mobile-ads" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/googleads/swift-package-manager-google-mobile-ads.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 13.8.0;
+			};
+		};
+		34ADACAD2FBEF00A00325064 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 12.13.0;
+			};
+		};
+		350000000000000000000005 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/google/GoogleSignIn-iOS.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 9.0.0;
+			};
+		};
+		350000000000000000000006 /* XCRemoteSwiftPackageReference "facebook-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/facebook/facebook-ios-sdk.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 18.0.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		340C5AF530341C7B00C4D6CD /* FirebaseFunctions */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 34ADACAD2FBEF00A00325064 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseFunctions;
+		};
+		348D7C5430339C4600E00FF6 /* FirebaseMessaging */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 34ADACAD2FBEF00A00325064 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseMessaging;
+		};
+		348D7C5A3033C3DD00E00FF6 /* FirebaseStorage */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 34ADACAD2FBEF00A00325064 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseStorage;
+		};
+		348D7C65303419A000E00FF6 /* RtcBasic */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 348D7C64303419A000E00FF6 /* XCRemoteSwiftPackageReference "AgoraRtcEngine_iOS" */;
+			productName = RtcBasic;
+		};
+		3494E99B3037376F0098DD4C /* GoogleMobileAds */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 3494E99A3037376F0098DD4C /* XCRemoteSwiftPackageReference "swift-package-manager-google-mobile-ads" */;
+			productName = GoogleMobileAds;
+		};
+		34ADACAE2FBEF00A00325064 /* FirebaseAuth */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 34ADACAD2FBEF00A00325064 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAuth;
+		};
+		34ADACB02FBEF00A00325064 /* FirebaseDatabase */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 34ADACAD2FBEF00A00325064 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseDatabase;
+		};
+		350000000000000000000002 /* GoogleSignIn */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 350000000000000000000005 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
+			productName = GoogleSignIn;
+		};
+		350000000000000000000004 /* FacebookLogin */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 350000000000000000000006 /* XCRemoteSwiftPackageReference "facebook-ios-sdk" */;
+			productName = FacebookLogin;
+		};
+		360000000000000000000002 /* FirebaseCrashlytics */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 34ADACAD2FBEF00A00325064 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseCrashlytics;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 344073F22FBEB37A00BACC63 /* Project object */;
 }

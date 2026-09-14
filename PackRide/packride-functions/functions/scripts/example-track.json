@@ -1,0 +1,19 @@
+{
+  "venueName": "Example Raceway",
+  "officialUrl": "https://example.com/track-layouts",
+  "center": { "latitude": 37.3300, "longitude": -122.0300 },
+  "configurations": [
+    {
+      "id": "default",
+      "name": "Default",
+      "isDefault": true,
+      "geoJSONFile": "example-layout.geojson",
+      "geometrySource": "OpenStreetMap contributors; reviewed against official circuit website",
+      "startFinish": {
+        "a": { "latitude": 37.3301, "longitude": -122.0301 },
+        "b": { "latitude": 37.3301, "longitude": -122.0298 },
+        "direction": "positive_to_negative"
+      }
+    }
+  ]
+}

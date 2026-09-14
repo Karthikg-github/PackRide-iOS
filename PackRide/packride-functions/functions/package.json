@@ -1,0 +1,19 @@
+{
+  "name": "functions",
+  "description": "PackRide Cloud Functions — push notifications + Agora voice token generation",
+  "engines": {
+    "node": "20"
+  },
+  "main": "index.js",
+  "scripts": {
+    "import-track": "node scripts/import-track.js",
+    "import-osm-tracks": "node scripts/import-osm-track-catalog.js"
+  },
+  "dependencies": {
+    "firebase-admin": "^12.1.0",
+    "firebase-functions": "^4.9.0",
+    "agora-token": "^2.0.5",
+    "nodemailer": "^6.9.14"
+  },
+  "private": true
+}

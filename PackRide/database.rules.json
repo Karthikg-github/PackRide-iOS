@@ -1,0 +1,135 @@
+{
+  "rules": {
+    "publicRiders": { ".read": "auth != null", "$uid": { ".write": "auth != null && auth.uid === $uid" } },
+    "users": {
+      "$uid": {
+        ".read": "auth != null && auth.uid === $uid",
+        ".write": "auth != null && auth.uid === $uid",
+        "followers": { ".read": "auth != null", ".write": "auth != null" },
+        "following": { ".write": "auth != null" },
+        "followRequests": {
+          "$requesterUID": {
+            ".read": "auth != null && (auth.uid === $uid || auth.uid === $requesterUID)",
+            ".write": "auth != null && (auth.uid === $uid || auth.uid === $requesterUID)"
+          }
+        },
+        "scheduledRides": { ".write": "auth != null" },
+        "rideInvites": {
+          "$senderUID": {
+            ".write": "auth != null && (auth.uid === $uid || auth.uid === $senderUID)"
+          }
+        },
+        "sharedLapSessions": {
+          "$shareID": {
+            ".write": "auth != null && (auth.uid === $uid || (!data.exists() && newData.child('ownerUid').val() === auth.uid))"
+          }
+        }
+      }
+    },
+    "locationFeeds": { "$viewerUID": { ".read": "auth != null && auth.uid === $viewerUID", ".write": false } },
+    "groupLocationFeeds": { "$rideCode": { "$viewerUID": { ".read": "auth != null && auth.uid === $viewerUID", ".write": false } } },
+    "rideMembers": { "$rideCode": { "$uid": { ".read": false, ".write": "auth != null && auth.uid === $uid" } } },
+    "voiceRooms": {
+      "$code": {
+        ".read": "auth != null && (data.child('members').child(auth.uid).exists() || data.child('joinRequests').child(auth.uid).exists())",
+        ".write": false
+      }
+    },
+    "rides": {
+      "$rideCode": {
+        ".read": "auth != null && root.child('rideMembers').child($rideCode).child(auth.uid).exists()",
+        "riders": {
+          "$deviceID": {
+            ".write": "auth != null && ((!data.exists() && newData.child('authUID').val() === auth.uid) || (data.exists() && data.child('authUID').val() === auth.uid))"
+          }
+        },
+        "tracks": { "$deviceID": { ".write": "auth != null && root.child('rideMembers').child($rideCode).child(auth.uid).exists()" } },
+        "finalStats": { "$deviceID": { ".write": "auth != null && root.child('rideMembers').child($rideCode).child(auth.uid).exists()" } },
+        "waypointsJSON": { ".write": "auth != null" }
+      }
+    },
+    "communities": {
+      ".read": "auth != null",
+      "$communityID": {
+        ".write": "auth != null && ((!data.exists() && (newData.child('createdBy').val() === auth.uid || newData.child('createdBy').val() === root.child('users').child(auth.uid).child('deviceID').val())) || (data.exists() && !newData.exists() && (data.child('createdBy').val() === auth.uid || data.child('createdBy').val() === root.child('users').child(auth.uid).child('deviceID').val())))",
+        "members": {
+          "$memberID": {
+            ".write": "auth != null && ((!data.exists() && newData.child('authUID').val() === auth.uid) || (data.exists() && data.child('authUID').val() === auth.uid))"
+          }
+        },
+        "scheduledRides": {
+          "$rideID": {
+            ".write": "auth != null && (root.child('users').child(auth.uid).child('communityMemberships').child($communityID).val() === true || root.child('scheduledRides').child($rideID).child('creatorID').val() === auth.uid)"
+          }
+        }
+      }
+    },
+    "scheduledRides": {
+      ".read": "auth != null",
+      ".indexOn": "scheduledDate",
+      "$rideID": {
+        ".write": "auth != null && ((!data.exists() && newData.child('creatorID').val() === auth.uid) || (data.exists() && data.child('creatorID').val() === auth.uid && (!newData.exists() || newData.child('creatorID').val() === auth.uid)))",
+        "rsvps": {
+          "$uid": { ".write": "auth != null && auth.uid === $uid" }
+        },
+        "rsvpCount": {
+          ".write": "auth != null && (data.parent().child('creatorID').val() === auth.uid || data.parent().child('rsvps').child(auth.uid).exists())"
+        }
+      }
+    },
+    "helpRequests": {
+      ".read": false,
+      "$uid": {
+        ".read": "auth != null && auth.uid === $uid",
+        ".write": "auth != null && auth.uid === $uid"
+      }
+    },
+    "moderationReports": {
+      ".read": false,
+      "$reportID": {
+        ".write": "auth != null && !data.exists() && newData.child('reporterUID').val() === auth.uid && newData.child('status').val() === 'open'"
+      }
+    },
+    "tracks": {
+      ".read": "auth != null",
+      ".write": false
+    },
+    "communityLayoutSubmissions": {
+      ".read": false,
+      "$submissionID": {
+        ".write": "auth != null && !data.exists() && newData.child('createdBy').val() === auth.uid && newData.child('status').val() === 'pending'"
+      }
+    },
+    "communityLayoutConfirmations": {
+      "$venueID": {
+        "$configurationID": {
+          "$uid": {
+            ".read": "auth != null && auth.uid === $uid",
+            ".write": "auth != null && auth.uid === $uid && !data.exists() && newData.child('confirmedAt').exists() && newData.child('source').val() === 'community_layout_selection'"
+          }
+        }
+      }
+    },
+    "crashIncidents": {
+      "$incidentID": {
+        ".read": false,
+        ".write": "auth != null && ((!data.exists() && newData.child('senderUID').val() === auth.uid && newData.child('status').val() === 'open') || (data.exists() && data.child('status').val() === 'open' && newData.child('status').val() === 'acknowledged' && newData.child('acknowledgedByUID').val() === auth.uid && data.child('primaryResponderUIDs').child(auth.uid).val() === true))"
+      }
+    },
+    "feedPosts": {
+      ".read": "auth != null",
+      ".indexOn": ["authorID"],
+      "$postID": {
+        ".write": "auth != null && (!data.exists() ? newData.child('authorID').val() === auth.uid : (data.child('authorID').val() === auth.uid || data.child('authorID').val() === root.child('users').child(auth.uid).child('deviceID').val()))",
+        "likes": { "$uid": { ".write": "auth != null && auth.uid === $uid" } },
+        "reactions": { "$uid": { ".write": "auth != null && auth.uid === $uid" } },
+        "bookmarks": { "$uid": { ".write": "auth != null && auth.uid === $uid" } },
+        "comments": {
+          "$commentID": {
+            ".write": "auth != null && (!data.exists() ? newData.child('userID').val() === auth.uid : (data.child('userID').val() === auth.uid || data.child('userID').val() === root.child('users').child(auth.uid).child('deviceID').val() || root.child('feedPosts').child($postID).child('authorID').val() === auth.uid || root.child('feedPosts').child($postID).child('authorID').val() === root.child('users').child(auth.uid).child('deviceID').val()))"
+          }
+        }
+      }
+    }
+  }
+}

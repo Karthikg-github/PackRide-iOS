@@ -1,0 +1,5 @@
+{
+  "database": {
+    "rules": "PackRide/database.rules.json"
+  }
+}

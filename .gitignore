@@ -1,0 +1,12 @@
+.DS_Store
+build/
+DerivedData/
+*.xcuserstate
+xcuserdata/
+PackRide/packride-functions.zip
+PackRide/package-lock.json
+PackRide/packride-functions/functions/node_modules/
+PackRide/PackRide_Handover_Document.md
+*.p12
+*.cer
+*.mobileprovision
