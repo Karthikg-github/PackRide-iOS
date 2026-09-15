@@ -406,8 +406,23 @@ struct HomeView: View {
                     Button(action: { switchTab(4) }) {
                         ZStack {
                             Circle().fill(Color.prCoral).frame(width: 34, height: 34)
-                            Text(initials).font(.system(size: 12, weight: .bold)).foregroundColor(.white)
+                            if let url = URL(string: notifManager.avatarURL), !notifManager.avatarURL.isEmpty {
+                                AsyncImage(url: url) { phase in
+                                    if let image = phase.image {
+                                        image.resizable().scaledToFill()
+                                    } else {
+                                        Text(initials)
+                                            .font(.system(size: 12, weight: .bold))
+                                            .foregroundColor(.white)
+                                    }
+                                }
+                                .frame(width: 34, height: 34)
+                                .clipShape(Circle())
+                            } else {
+                                Text(initials).font(.system(size: 12, weight: .bold)).foregroundColor(.white)
+                            }
                         }
+                        .overlay(Circle().stroke(Color.white.opacity(0.9), lineWidth: 1.5))
                     }
                 }
                 .padding(.horizontal, 20)
