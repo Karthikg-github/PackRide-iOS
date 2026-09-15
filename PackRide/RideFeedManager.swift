@@ -73,6 +73,7 @@ struct FeedComment: Identifiable {
     let userName: String
     let text: String
     let timestamp: TimeInterval
+    var avatarURL: String = ""
 }
 
 // MARK: - Ride Feed Manager
@@ -371,7 +372,10 @@ class RideFeedManager: ObservableObject {
                       let text = data["text"] as? String,
                       let timestamp = data["timestamp"] as? TimeInterval
                 else { continue }
-                loaded.append(FeedComment(id: snap.key, userID: userID, userName: userName, text: text, timestamp: timestamp))
+                loaded.append(FeedComment(
+                    id: snap.key, userID: userID, userName: userName, text: text,
+                    timestamp: timestamp, avatarURL: data["avatarURL"] as? String ?? ""
+                ))
             }
             DispatchQueue.main.async {
                 self?.comments[postID] = loaded.sorted { $0.timestamp < $1.timestamp }
@@ -380,12 +384,13 @@ class RideFeedManager: ObservableObject {
         commentHandles[postID] = (ref, handle)
     }
 
-    func addComment(postID: String, text: String, userName: String) {
+    func addComment(postID: String, text: String, userName: String, avatarURL: String = "") {
         guard !myID.isEmpty, !text.trimmingCharacters(in: .whitespaces).isEmpty else { return }
         let data: [String: Any] = [
             "userID": myID, "userName": userName,
             "text": text.trimmingCharacters(in: .whitespaces),
-            "timestamp": Date().timeIntervalSince1970
+            "timestamp": Date().timeIntervalSince1970,
+            "avatarURL": avatarURL
         ]
         db.child("feedPosts").child(postID).child("comments").childByAutoId().setValue(data)
     }

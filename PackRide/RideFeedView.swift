@@ -468,6 +468,14 @@ struct FeedRideDetailView: View {
                 Spacer()
             }
 
+            if post.maxSpeedMph <= 0, post.rideScore == nil, post.turnCount == nil {
+                Text("Telemetry was not included when this ride was posted. Ask the rider to repost it from the current PackRide version.")
+                    .font(.system(size: 12)).foregroundColor(.prMuted)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.horizontal, 16).padding(.vertical, 10)
+                    .background(Color.prCardBg)
+            }
+
             HStack(spacing: 0) {
                 detailStat(post.maxSpeedMph > 0 ? MeasurementUnits.speedMph(post.maxSpeedMph) : "—", "TOP SPEED")
                 detailStat(post.rideScore.map(String.init) ?? "—", "RIDE SCORE")
@@ -732,10 +740,32 @@ struct RecommendedRideCard: View {
 }
 
 // MARK: - Comments Sheet
+private struct CommentAvatarView: View {
+    let initials: String
+    let avatarURL: String
+
+    var body: some View {
+        ZStack {
+            Circle().fill(Color.prCoralSoft)
+            if let url = URL(string: avatarURL), !avatarURL.isEmpty {
+                AsyncImage(url: url) { image in
+                    image.resizable().scaledToFill()
+                } placeholder: {
+                    ProgressView().tint(.prCoral)
+                }
+            } else {
+                Text(initials).font(.system(size: 11, weight: .bold)).foregroundColor(.prCoral)
+            }
+        }
+        .clipShape(Circle())
+    }
+}
+
 struct FeedCommentsSheet: View {
     let post: FeedPost
     @ObservedObject var manager: RideFeedManager
     @AppStorage("riderName") var riderName: String = "Rider"
+    @AppStorage("avatarURL") var avatarURL: String = ""
     @State private var commentText = ""
     @State private var commentPendingDelete: FeedComment? = nil
     @State private var deleteCommentError: String? = nil
@@ -762,11 +792,11 @@ struct FeedCommentsSheet: View {
                         } else {
                             ForEach(list) { comment in
                                 HStack(alignment: .top, spacing: 10) {
-                                    ZStack {
-                                        Circle().fill(Color.prCoralSoft)
-                                        Text(comment.userName.rideInitials)
-                                            .font(.system(size: 11, weight: .bold)).foregroundColor(.prCoral)
-                                    }
+                                    CommentAvatarView(
+                                        initials: comment.userName.rideInitials,
+                                        avatarURL: comment.avatarURL.isEmpty && manager.myKnownIDs.contains(comment.userID)
+                                            ? avatarURL : comment.avatarURL
+                                    )
                                     .frame(width: 38, height: 38)
 
                                     VStack(alignment: .leading, spacing: 3) {
@@ -799,7 +829,7 @@ struct FeedCommentsSheet: View {
                         .padding(.horizontal, 14).padding(.vertical, 11)
                         .background(Color.prFieldBg).clipShape(Capsule())
                     Button(action: {
-                        manager.addComment(postID: post.id, text: commentText, userName: riderName)
+                        manager.addComment(postID: post.id, text: commentText, userName: riderName, avatarURL: avatarURL)
                         commentText = ""
                     }) {
                         Image(systemName: "paperplane.fill").foregroundColor(.white)
