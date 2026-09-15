@@ -420,7 +420,7 @@ struct FeedPostCard: View {
         } message: {
             Text(deleteError ?? "")
         }
-        .sheet(isPresented: $showComments) {
+        .fullScreenCover(isPresented: $showComments) {
             FeedCommentsSheet(post: post, manager: manager)
         }
     }
@@ -751,29 +751,42 @@ struct FeedCommentsSheet: View {
         NavigationStack {
             VStack(spacing: 0) {
                 ScrollView {
-                    VStack(alignment: .leading, spacing: 10) {
+                    LazyVStack(alignment: .leading, spacing: 16) {
                         let list = manager.comments[post.id] ?? []
                         if list.isEmpty {
-                            Text("No comments yet").font(.system(size: 13)).foregroundColor(.prMuted).padding(.top, 40)
+                            VStack(spacing: 6) {
+                                Text("No comments yet").font(.system(size: 15, weight: .semibold)).foregroundColor(.prInk)
+                                Text("Start the conversation.").font(.system(size: 13)).foregroundColor(.prMuted)
+                            }
+                            .frame(maxWidth: .infinity).padding(.top, 60)
                         } else {
                             ForEach(list) { comment in
-                                HStack(alignment: .top, spacing: 8) {
-                                    VStack(alignment: .leading, spacing: 2) {
-                                        Text(comment.userName).font(.system(size: 13, weight: .bold)).foregroundColor(.prInk)
-                                        Text(comment.text).font(.system(size: 14)).foregroundColor(.prInk)
+                                HStack(alignment: .top, spacing: 10) {
+                                    ZStack {
+                                        Circle().fill(Color.prCoralSoft)
+                                        Text(comment.userName.rideInitials)
+                                            .font(.system(size: 11, weight: .bold)).foregroundColor(.prCoral)
                                     }
+                                    .frame(width: 38, height: 38)
+
+                                    VStack(alignment: .leading, spacing: 3) {
+                                        HStack(spacing: 8) {
+                                            Text(comment.userName).font(.system(size: 13, weight: .bold)).foregroundColor(.prInk)
+                                            Text(commentAge(comment.timestamp)).font(.system(size: 11)).foregroundColor(.prMuted)
+                                        }
+                                        Text(comment.text).font(.system(size: 15)).foregroundColor(.prInk)
+                                            .fixedSize(horizontal: false, vertical: true)
+                                    }
+                                    .frame(maxWidth: .infinity, alignment: .leading)
                                     Spacer(minLength: 8)
                                     if canDelete(comment) {
                                         Button(action: { commentPendingDelete = comment }) {
-                                            Image(systemName: "trash").font(.system(size: 12)).foregroundColor(.prMuted)
+                                            Image(systemName: "trash").font(.system(size: 13)).foregroundColor(.prMuted)
+                                                .frame(width: 32, height: 32)
                                         }
                                     }
                                 }
-                                .padding(12)
                                 .frame(maxWidth: .infinity, alignment: .leading)
-                                .background(Color.prCardBg)
-                                .cornerRadius(12)
-                                .overlay(RoundedRectangle(cornerRadius: 12).stroke(Color.prBorder, lineWidth: 1))
                             }
                         }
                     }
@@ -783,18 +796,20 @@ struct FeedCommentsSheet: View {
                 HStack(spacing: 10) {
                     TextField("Add a comment...", text: $commentText)
                         .foregroundColor(.prInk)
-                        .padding(12).background(Color.prCardBg).cornerRadius(12)
-                        .overlay(RoundedRectangle(cornerRadius: 12).stroke(Color.prBorder, lineWidth: 1))
+                        .padding(.horizontal, 14).padding(.vertical, 11)
+                        .background(Color.prFieldBg).clipShape(Capsule())
                     Button(action: {
                         manager.addComment(postID: post.id, text: commentText, userName: riderName)
                         commentText = ""
                     }) {
                         Image(systemName: "paperplane.fill").foregroundColor(.white)
-                            .frame(width: 44, height: 44).background(Color.prCoral).cornerRadius(12)
+                            .frame(width: 44, height: 44).background(Color.prCoral).clipShape(Circle())
                     }
                     .disabled(commentText.trimmingCharacters(in: .whitespaces).isEmpty)
                 }
                 .padding(16)
+                .background(Color.prCardBg)
+                .overlay(Rectangle().fill(Color.prBorder).frame(height: 1), alignment: .top)
             }
             .background(Color.prBg.ignoresSafeArea())
             .navigationTitle(post.title)
@@ -826,6 +841,15 @@ struct FeedCommentsSheet: View {
         } message: {
             Text(deleteCommentError ?? "")
         }
+    }
+
+    private func commentAge(_ timestamp: TimeInterval) -> String {
+        let seconds = max(0, Int(Date().timeIntervalSince1970 - timestamp))
+        if seconds < 60 { return "now" }
+        if seconds < 3_600 { return "\(seconds / 60)m" }
+        if seconds < 86_400 { return "\(seconds / 3_600)h" }
+        if seconds < 604_800 { return "\(seconds / 86_400)d" }
+        return "\(seconds / 604_800)w"
     }
 }
 
