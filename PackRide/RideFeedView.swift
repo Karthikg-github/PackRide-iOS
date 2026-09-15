@@ -15,6 +15,7 @@ struct RideFeedView: View {
     // starts listenForFollowRequests()).
     @EnvironmentObject private var profileManager: UserProfileManager
     @State private var feedMode: FeedMode = .feed
+    @AppStorage("feedAudience") private var feedAudienceRaw = "everyone"
     @State private var showNotifications = false
     @State private var showNeedHelp = false
 
@@ -26,10 +27,19 @@ struct RideFeedView: View {
     // own card layout, so mixing them in would look inconsistent. They only
     // ever show up under "My Laps".
     enum FeedMode { case feed, mine, myLaps }
+    enum FeedAudience: String { case everyone, following }
+
+    var feedAudience: FeedAudience {
+        FeedAudience(rawValue: feedAudienceRaw) ?? .everyone
+    }
 
     var displayedPosts: [FeedPost] {
         switch feedMode {
-        case .feed: return feedManager.posts.filter { !$0.isLapSession }
+        case .feed:
+            let followedAndMine = Set(profileManager.followedUsers.map { $0.id }).union(feedManager.myKnownIDs)
+            return feedManager.posts.filter {
+                !$0.isLapSession && (feedAudience == .everyone || followedAndMine.contains($0.authorID))
+            }
         case .mine: return feedManager.posts.filter { feedManager.myKnownIDs.contains($0.authorID) && !$0.isLapSession }
         case .myLaps: return feedManager.posts.filter { feedManager.myKnownIDs.contains($0.authorID) && $0.isLapSession }
         }
@@ -50,6 +60,8 @@ struct RideFeedView: View {
             webHeaderBar
 
             topToggle
+
+            if feedMode == .feed { audienceToggle }
 
             if feedManager.isLoading && feedManager.posts.isEmpty {
                 Spacer()
@@ -102,10 +114,7 @@ struct RideFeedView: View {
         .onAppear {
             profileManager.listenForFollowedUsers()
             profileManager.listenForAllUsers()
-            feedManager.listenForFeed(followingIDs: profileManager.followedUsers.map { $0.id })
-        }
-        .onChange(of: profileManager.followedUsers.map { $0.id }) { _, ids in
-            feedManager.listenForFeed(followingIDs: ids)
+            feedManager.listenForFeed()
         }
         .onDisappear {
             profileManager.stopListeningForFollowedUsers()
@@ -203,6 +212,31 @@ struct RideFeedView: View {
         .frame(maxWidth: .infinity)
     }
 
+    private var audienceToggle: some View {
+        HStack(spacing: 8) {
+            audienceButton("Everyone", audience: .everyone)
+            audienceButton("Following", audience: .following)
+        }
+        .padding(.horizontal, 16)
+        .padding(.vertical, 10)
+        .background(Color.prCardBg)
+    }
+
+    private func audienceButton(_ title: String, audience: FeedAudience) -> some View {
+        Button {
+            withAnimation(.easeOut(duration: 0.18)) { feedAudienceRaw = audience.rawValue }
+        } label: {
+            Text(title)
+                .font(.system(size: 14, weight: .bold))
+                .foregroundColor(feedAudience == audience ? .white : .prInk)
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 10)
+                .background(feedAudience == audience ? Color.prCoral : Color.prFieldBg)
+                .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+        }
+        .buttonStyle(.plain)
+    }
+
     // MARK: - Empty State
     private var emptyState: some View {
         VStack(spacing: 14) {
@@ -214,7 +248,7 @@ struct RideFeedView: View {
             Text(feedMode == .feed ? "No rides yet" : feedMode == .mine ? "You haven't posted any rides" : "No lap sessions posted yet")
                 .font(.system(size: 16, weight: .bold)).foregroundColor(.prInk)
             Text(feedMode == .feed
-                 ? "Follow riders from their profile to see their rides here."
+                 ? "Public rides posted by the Pack will appear here."
                  : feedMode == .mine
                  ? "Finish a ride and choose \"Post to Feed\" to share it, or share a past ride from Ride History."
                  : "Finish a Track Mode session and choose \"Post to Feed\" to share your lap times here.")

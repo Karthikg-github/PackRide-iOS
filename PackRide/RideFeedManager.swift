@@ -79,7 +79,8 @@ struct FeedComment: Identifiable {
 // are optional — added Aug 17, 2026 once the project moved to the Blaze plan, which
 // Firebase Storage requires. A post can have a route, a photo, both, or (rarely)
 // neither. The feed itself isn't fanned out server-side (no Cloud Functions needed
-// either) — the client pulls the most recent posts and filters to people you follow.
+// either) — the client pulls the most recent public posts. The view can switch
+// between Everyone and Following without starting another Firebase listener.
 class RideFeedManager: ObservableObject {
     private let db = Database.database().reference()
 
@@ -114,14 +115,10 @@ class RideFeedManager: ObservableObject {
     }
 
     // MARK: - Feed listening
-    // followingIDs comes from UserProfileManager.followedUsers — the feed always
-    // includes your own posts too, so "Ride Feed" and "My Rides" share one listener.
-    func listenForFeed(followingIDs: [String]) {
+    func listenForFeed() {
         stopListening()
         guard !myID.isEmpty else { return }
         isLoading = true
-        let allowedIDs = Set(followingIDs + [myID])
-
         let ref = db.child("feedPosts").queryLimited(toLast: 100)
         feedRef = ref
         feedHandle = ref.observe(.value) { [weak self] snapshot in
@@ -129,8 +126,7 @@ class RideFeedManager: ObservableObject {
             var loaded: [FeedPost] = []
             for child in snapshot.children {
                 guard let snap = child as? DataSnapshot,
-                      let post = Self.parsePost(snap, myID: self.myID),
-                      allowedIDs.contains(post.authorID) else { continue }
+                      let post = Self.parsePost(snap, myID: self.myID) else { continue }
                 loaded.append(post)
             }
             DispatchQueue.main.async {
