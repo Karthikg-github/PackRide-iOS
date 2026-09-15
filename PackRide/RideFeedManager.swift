@@ -48,6 +48,9 @@ struct FeedPost: Identifiable {
     // ownership and reaction/comment permission checks), it just never
     // surfaces in the feed UI for an anonymous post.
     var isAnonymous: Bool = false
+    var maxSpeedMph: Double = 0
+    var rideScore: Int? = nil
+    var turnCount: Int? = nil
 
     var distanceString: String { MeasurementUnits.distanceMiles(distance) }
 
@@ -192,7 +195,10 @@ class RideFeedManager: ObservableObject {
             trackName: data["trackName"] as? String ?? "",
             lapTimes: lapTimes,
             bestLapTime: data["bestLapTime"] as? Double ?? 0,
-            isAnonymous: data["isAnonymous"] as? Bool ?? false
+            isAnonymous: data["isAnonymous"] as? Bool ?? false,
+            maxSpeedMph: (data["maxSpeedMph"] as? NSNumber)?.doubleValue ?? 0,
+            rideScore: (data["rideScore"] as? NSNumber)?.intValue,
+            turnCount: (data["turnCount"] as? NSNumber)?.intValue
         )
     }
 
@@ -235,6 +241,14 @@ class RideFeedManager: ObservableObject {
         let route = Self.decimatedRoute(fromGPX: gpxFilePath)
         if !route.isEmpty {
             data["route"] = route.map { ["lat": $0.lat, "lng": $0.lng] }
+        }
+        if let gpxFilePath {
+            let points = GPXPointParser.parse(gpxFilePath: gpxFilePath)
+            if let topSpeed = points.map(\.speedMph).max(), topSpeed > 0 { data["maxSpeedMph"] = topSpeed }
+            if let analytics = RideAnalyticsEngine.analyze(gpxFilePath: gpxFilePath) {
+                data["rideScore"] = analytics.rideScore
+                data["turnCount"] = analytics.cornerCount
+            }
         }
 
         guard let photoData else {

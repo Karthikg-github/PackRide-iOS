@@ -18,6 +18,7 @@ struct RideFeedView: View {
     @AppStorage("feedAudience") private var feedAudienceRaw = "everyone"
     @State private var showNotifications = false
     @State private var showNeedHelp = false
+    @State private var selectedRide: FeedPost? = nil
 
     var myInitials: String { riderName.rideInitials }
 
@@ -26,7 +27,7 @@ struct RideFeedView: View {
     // content shape (lap times, not distance/duration/route) that needs its
     // own card layout, so mixing them in would look inconsistent. They only
     // ever show up under "My Laps".
-    enum FeedMode { case feed, mine, myLaps }
+    enum FeedMode { case feed, favorites, mine, myLaps }
     enum FeedAudience: String { case everyone, following }
 
     var feedAudience: FeedAudience {
@@ -42,6 +43,7 @@ struct RideFeedView: View {
             }
         case .mine: return feedManager.posts.filter { feedManager.myKnownIDs.contains($0.authorID) && !$0.isLapSession }
         case .myLaps: return feedManager.posts.filter { feedManager.myKnownIDs.contains($0.authorID) && $0.isLapSession }
+        case .favorites: return feedManager.posts.filter { $0.bookmarkedByMe && !$0.isLapSession }
         }
     }
 
@@ -96,6 +98,7 @@ struct RideFeedView: View {
                                     isMine: feedManager.myKnownIDs.contains(post.authorID),
                                     onReact: { emoji in feedManager.setReaction(postID: post.id, emoji: emoji) },
                                     onBookmark: { feedManager.toggleBookmark(postID: post.id, currentlyBookmarked: post.bookmarkedByMe) },
+                                    onOpenRide: { selectedRide = post },
                                     manager: feedManager
                                 )
                             }
@@ -126,6 +129,9 @@ struct RideFeedView: View {
         }
         .fullScreenCover(isPresented: $showNeedHelp) {
             NeedHelpView()
+        }
+        .fullScreenCover(item: $selectedRide) { post in
+            FeedRideDetailView(post: post)
         }
     }
 
@@ -190,6 +196,7 @@ struct RideFeedView: View {
     private var topToggle: some View {
         HStack(spacing: 0) {
             toggleButton(title: "Ride Feed", mode: .feed)
+            toggleButton(title: "Saved", mode: .favorites)
             toggleButton(title: "My Rides", mode: .mine)
             toggleButton(title: "My Laps", mode: .myLaps)
         }
@@ -245,10 +252,12 @@ struct RideFeedView: View {
                 Circle().fill(Color.prCoralSoft).frame(width: 80, height: 80)
                 Image(systemName: "flag.checkered").font(.system(size: 30)).foregroundColor(.prCoral)
             }
-            Text(feedMode == .feed ? "No rides yet" : feedMode == .mine ? "You haven't posted any rides" : "No lap sessions posted yet")
+            Text(feedMode == .feed ? "No rides yet" : feedMode == .favorites ? "No saved rides" : feedMode == .mine ? "You haven't posted any rides" : "No lap sessions posted yet")
                 .font(.system(size: 16, weight: .bold)).foregroundColor(.prInk)
             Text(feedMode == .feed
                  ? "Public rides posted by the Pack will appear here."
+                 : feedMode == .favorites
+                 ? "Tap the bookmark on a ride to save its route here."
                  : feedMode == .mine
                  ? "Finish a ride and choose \"Post to Feed\" to share it, or share a past ride from Ride History."
                  : "Finish a Track Mode session and choose \"Post to Feed\" to share your lap times here.")
@@ -285,6 +294,7 @@ struct FeedPostCard: View {
     let isMine: Bool
     let onReact: (String?) -> Void
     let onBookmark: () -> Void
+    let onOpenRide: () -> Void
     @ObservedObject var manager: RideFeedManager
 
     @State private var showComments = false
@@ -343,10 +353,17 @@ struct FeedPostCard: View {
                 .frame(height: 240)
                 .frame(maxWidth: .infinity)
                 .clipped()
+                .contentShape(Rectangle())
+                .onTapGesture(perform: onOpenRide)
             } else if !post.route.isEmpty {
                 FeedRouteMapView(route: post.routeCoordinates)
                     .frame(height: 200)
                     .allowsHitTesting(false)
+                    .overlay(
+                        Color.clear
+                            .contentShape(Rectangle())
+                            .onTapGesture(perform: onOpenRide)
+                    )
             }
 
             HStack(spacing: 0) {
@@ -415,6 +432,59 @@ struct FeedPostCard: View {
            let vc = scene.windows.first?.rootViewController {
             vc.present(av, animated: true)
         }
+    }
+}
+
+struct FeedRideDetailView: View {
+    let post: FeedPost
+    @Environment(\.dismiss) private var dismiss
+
+    var body: some View {
+        VStack(spacing: 0) {
+            HStack(spacing: 12) {
+                Button { dismiss() } label: {
+                    Image(systemName: "chevron.left")
+                        .font(.system(size: 18, weight: .bold))
+                        .foregroundColor(.prInk)
+                        .frame(width: 42, height: 42)
+                        .background(Color.prFieldBg)
+                        .clipShape(Circle())
+                }
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(post.title).font(.system(size: 20, weight: .bold)).foregroundColor(.prInk)
+                    Text("\(post.authorName) · \(post.distanceString)").font(.system(size: 13)).foregroundColor(.prMuted)
+                }
+                Spacer()
+            }
+            .padding(12)
+            .background(Color.prCardBg)
+
+            if post.route.count > 1 {
+                FeedRouteMapView(route: post.routeCoordinates, interactive: true)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+            } else {
+                Spacer()
+                Text("This older feed post has no saved route.").foregroundColor(.prMuted)
+                Spacer()
+            }
+
+            HStack(spacing: 0) {
+                detailStat(post.maxSpeedMph > 0 ? MeasurementUnits.speedMph(post.maxSpeedMph) : "—", "TOP SPEED")
+                detailStat(post.rideScore.map(String.init) ?? "—", "RIDE SCORE")
+                detailStat(post.turnCount.map(String.init) ?? "—", "TURNS")
+            }
+            .padding(.vertical, 18)
+            .background(Color.prCardBg)
+        }
+        .background(Color.prBg.ignoresSafeArea())
+    }
+
+    private func detailStat(_ value: String, _ label: String) -> some View {
+        VStack(spacing: 4) {
+            Text(value).font(.system(size: 20, weight: .heavy)).foregroundColor(.prInk)
+            Text(label).font(.system(size: 10, weight: .bold)).tracking(1).foregroundColor(.prMuted)
+        }
+        .frame(maxWidth: .infinity)
     }
 }
 
@@ -766,14 +836,15 @@ private class FeedPinAnnotation: MKPointAnnotation {
 
 struct FeedRouteMapView: UIViewRepresentable {
     let route: [CLLocationCoordinate2D]
+    var interactive: Bool = false
 
     func makeUIView(context: Context) -> MKMapView {
         let mapView = MKMapView()
         mapView.delegate = context.coordinator
-        mapView.isScrollEnabled = false
-        mapView.isZoomEnabled = false
-        mapView.isRotateEnabled = false
-        mapView.isPitchEnabled = false
+        mapView.isScrollEnabled = interactive
+        mapView.isZoomEnabled = interactive
+        mapView.isRotateEnabled = interactive
+        mapView.isPitchEnabled = interactive
         // Matches the hybrid style used everywhere else in the app (Home,
         // Group Ride, Track Mode, etc.) — this small preview map was still
         // hardcoded to plain .standard, which is why it looked like it had
